@@ -1,4 +1,4 @@
-import { Component, useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import axios from 'axios';
 import { BASE_URL, KEY, PARAMS } from './PixabayApi';
 import Notiflix from 'notiflix';
