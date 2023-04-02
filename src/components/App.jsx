@@ -14,7 +14,7 @@ const App = () => {
   const [nameF, setName] = useState('');
   const [pageF, setPage] = useState(1);
   const [showModal, setShowModal] = useState(false);
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
   const [largeImageURL, setLargeImageURL] = useState('');
   const [tags, setTags] = useState('');
 
@@ -25,8 +25,7 @@ const App = () => {
     });
   });
 
-  const getValue = ({ name, page }) => {
-    setLoading(true);
+  const getValue = (name = '', page = 1) => {
     try {
       axios
         .get(`${BASE_URL}?key=${KEY}&q=${name}&page=${page}&${PARAMS}`)
@@ -34,15 +33,16 @@ const App = () => {
           if (!response.data.hits.length) {
             Notiflix.Notify.failure('No images found!');
           } else if (name === nameF) {
-            setHits({ ...hits, ...response.data.hits });
-            setName(name);
+            setLoading(true);
+
+            setHits([...hits, ...response.data.hits]);
             setPage(pageF + 1);
-            console.log(nameF);
           } else {
+            setLoading(true);
+
             setHits(response.data.hits);
             setName(name);
-            setPage(pageF + 1);
-            console.log(nameF);
+            setPage(2);
           }
         });
     } catch (error) {
@@ -56,15 +56,15 @@ const App = () => {
     setLargeImageURL(largeImageURL);
     setTags(tags);
   };
+
   const loadMore = () => {
-    console.log(nameF);
     getValue(nameF, pageF);
   };
   return (
     <div>
       <Searchbar onSubmitHandle={getValue} />
 
-      {loading && <SpinnerLoader />}
+      {!loading && <SpinnerLoader />}
 
       {hits && (
         <ImageGallery>
@@ -81,83 +81,4 @@ const App = () => {
   );
 };
 
-// class AppClass extends Component {
-//   state = {
-//     hits: [],
-//     name: '',
-//     page: 1,
-//     showModal: false,
-//     loading: false,
-//     largeImageURL: '',
-//     tags: '',
-//   };
-
-//   toggleModal = (imageURL, tag, id) => {
-//     this.setState(({ showModal }) => ({
-//       showModal: !showModal,
-//       largeImageURL: imageURL,
-//       tags: tag,
-//     }));
-//   };
-
-//   getValue = ({ name, page }) => {
-//     this.setState({ loading: true });
-//     try {
-//       axios
-//         .get(`${BASE_URL}?key=${KEY}&q=${name}&page=${page}&${PARAMS}`)
-//         .then(response => {
-//           if (!response.data.hits.length) {
-//             Notiflix.Notify.failure('No images found!');
-//           } else if (name === this.state.name) {
-//             this.setState(state => ({
-//               hits: [...state.hits, ...response.data.hits],
-//               name: name,
-//               page: state.page + 1,
-//             }));
-//           } else {
-//             this.setState(state => ({
-//               hits: response.data.hits,
-//               name: name,
-//               page: state.page + 1,
-//             }));
-//           }
-//         });
-//     } catch (error) {
-//       console.error(error.message);
-//     } finally {
-//       this.setState({
-//         loading: false,
-//       });
-//     }
-//   };
-
-//   loadMore = () => {
-//     this.getValue(this.state);
-//   };
-
-//   render() {
-//     const { hits, showModal, loading, largeImageURL, tags } = this.state;
-//     return (
-//       <div>
-//         <Searchbar onSubmit={this.getValue} />
-
-//         {loading && <SpinnerLoader />}
-
-//         {hits && (
-//           <ImageGallery>
-//             <ImageGalleryItem articles={hits} onImage={this.toggleModal} />
-//           </ImageGallery>
-//         )}
-
-//         {showModal && (
-//           <Modal onClose={this.toggleModal} url={largeImageURL} alt={tags} />
-//         )}
-
-//         {hits.length > 0 && (
-//           <LoadMoreBtn onButtonClick={() => this.loadMore()} />
-//         )}
-//       </div>
-//     );
-//   }
-// }
 export default App;

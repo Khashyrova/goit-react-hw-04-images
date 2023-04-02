@@ -8,22 +8,21 @@ const Searchbar = ({ onSubmitHandle }) => {
   const [page, setPage] = useState(1);
 
   const handleChange = e => {
-    const value = e.currentTarget.value;
-    setName(`${value}`);
+    setName(e.target.value);
   };
   const reset = () => {
     setName('');
   };
   const handleSubmit = e => {
     e.preventDefault();
-
-    if (name === '') {
+    if (name.trim() === '') {
       Notiflix.Notify.failure(
         'You have to enter something first to search for images!'
       );
       return;
     }
-    onSubmitHandle({ name, page });
+    setPage(1);
+    onSubmitHandle(name, page);
     reset();
   };
   return (
