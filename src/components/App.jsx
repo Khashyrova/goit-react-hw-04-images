@@ -17,7 +17,7 @@ const App = () => {
   const [loading, setLoading] = useState(true);
   const [largeImageURL, setLargeImageURL] = useState('');
   const [tags, setTags] = useState('');
-
+  const [total, setTotal] = useState(0);
   useEffect(() => {
     window.scrollTo({
       top: document.documentElement.scrollHeight,
@@ -32,6 +32,7 @@ const App = () => {
         .then(response => {
           if (!response.data.hits.length) {
             Notiflix.Notify.failure('No images found!');
+            setLoading(true);
           } else if (name === nameF) {
             setLoading(true);
 
@@ -39,7 +40,7 @@ const App = () => {
             setPage(pageF + 1);
           } else {
             setLoading(true);
-
+            setTotal(response.data.totalHits);
             setHits(response.data.hits);
             setName(name);
             setPage(2);
@@ -60,6 +61,7 @@ const App = () => {
   const loadMore = () => {
     getValue(nameF, pageF);
   };
+  console.log(total);
   return (
     <div>
       <Searchbar onSubmitHandle={getValue} />
@@ -76,7 +78,9 @@ const App = () => {
         <Modal onClose={toggleModal} url={largeImageURL} alt={tags} />
       )}
 
-      {hits.length > 0 && <LoadMoreBtn onButtonClick={() => loadMore()} />}
+      {hits.length > 0 && hits.length < total && (
+        <LoadMoreBtn onButtonClick={() => loadMore()} />
+      )}
     </div>
   );
 };

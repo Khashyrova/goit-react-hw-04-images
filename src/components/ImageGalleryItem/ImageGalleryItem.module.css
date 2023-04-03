@@ -15,7 +15,7 @@
 
 .ImageGalleryItem .ImageGalleryItemImage {
   width: 100%;
-  height: auto;
+  height: 100%;
   -o-object-fit: cover;
   object-fit: cover;
   -webkit-transform: scale(1);
